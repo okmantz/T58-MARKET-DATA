@@ -4,25 +4,86 @@ Historical market data for the [T58 Quant Algo Backtester](https://github.com/OW
 
 > **Private use only.** See [LICENSE](LICENSE). Some of this data comes from third-party vendors and may not be redistributed.
 
-## What's in here
+## Instruments (29)
 
-<!-- Fill in / delete rows to match the repo -->
+One folder per instrument. Folder names match the table exactly.
 
-| Symbol | Instrument | Timeframe | Range | File |
-|--------|------------|-----------|-------|------|
-| ES | E-mini S&P 500 futures | 1m | YYYY-MM-DD to YYYY-MM-DD | `data/ES_1m.parquet` |
-| MGC | Micro Gold futures | 1m | YYYY-MM-DD to YYYY-MM-DD | `data/MGC_1m.parquet` |
+<!-- Fill in timeframes and date ranges once, here: e.g. "All folders: 1m and 5m bars, YYYY-MM-DD to YYYY-MM-DD" -->
+
+### Futures (continuous front-month, `1!`)
+
+| Folder | Instrument |
+|--------|------------|
+| `ES1!` | E-mini S&P 500 |
+| `MES1!` | Micro E-mini S&P 500 |
+| `NQ1!` | E-mini Nasdaq-100 |
+| `MNQ1!` | Micro E-mini Nasdaq-100 |
+| `GC1!` | Gold |
+| `MGC1!` | Micro Gold |
+| `SI1!` | Silver |
+
+### Indices
+
+| Folder | Instrument |
+|--------|------------|
+| `S&P 500` | S&P 500 |
+| `NASDAQ 100` | Nasdaq-100 |
+| `DOW JONES 30` | Dow Jones Industrial Average |
+| `RUSSELL 2000` | Russell 2000 |
+
+### Forex
+
+| Folder | Pair |
+|--------|------|
+| `AUDUSD` | Australian dollar / US dollar |
+| `EURUSD` | Euro / US dollar |
+| `GBPUSD` | British pound / US dollar |
+| `NZDUSD` | New Zealand dollar / US dollar |
+| `USDCAD` | US dollar / Canadian dollar |
+| `USDCHF` | US dollar / Swiss franc |
+| `USDJPY` | US dollar / Japanese yen |
+
+### Metals (spot)
+
+| Folder | Instrument |
+|--------|------------|
+| `XAUUSD (GOLD)` | Gold |
+| `XAGUSD (SILVER)` | Silver |
+| `XCUUSD (COPPER)` | Copper |
+| `XPTUSD (PLATINUM)` | Platinum |
+
+### Energy
+
+| Folder | Instrument |
+|--------|------------|
+| `BRENT CRUDE OIL` | Brent crude oil |
+
+### Crypto
+
+| Folder | Instrument |
+|--------|------------|
+| `BITCOIN` | Bitcoin |
+| `ETHEREUM` | Ethereum |
+| `SOLANA` | Solana |
+| `DOGECOIN` | Dogecoin |
+
+### Stocks
+
+| Folder | Instrument |
+|--------|------------|
+| `NVIDIA` | NVIDIA |
+| `YAHOO` | <!-- describe: Yahoo stock, or data pulled from Yahoo Finance? --> |
 
 ## Layout
 
 ```
-data/
-  <SYMBOL>_<TIMEFRAME>.<csv|parquet>
+<INSTRUMENT FOLDER>/
+  <files, e.g. SYMBOL_TIMEFRAME.csv or .parquet>
 README.md
 LICENSE
 ```
 
-One file per symbol and timeframe. Name new files `SYMBOL_TIMEFRAME.ext` (e.g. `NQ_5m.parquet`) so they are easy to find and the backtester can pick the right one.
+Name files `SYMBOL_TIMEFRAME.ext` (e.g. `ES1_5m.parquet`) so they are easy to find.
 
 ## Format
 
@@ -35,10 +96,10 @@ Columns, in this order:
 | `high` | float | |
 | `low` | float | |
 | `close` | float | |
-| `volume` | float | Contracts traded in the bar |
+| `volume` | float | Contracts / units traded in the bar. Forex volume may be tick volume |
 
 - Sorted ascending by `timestamp`, no duplicate timestamps.
-- Prices are `<raw / back-adjusted / continuous contract method>`.
+- Futures (`1!`) are continuous contracts: `<describe roll / adjustment method>`.
 - Missing bars (weekends, holidays, maintenance halts) are left out, not filled.
 
 ## Using it with the backtester
@@ -47,14 +108,14 @@ Columns, in this order:
 2. In the backtester, open the **Market Data** page and upload the file.
 3. Pick the matching instrument so point value and tick size are applied correctly.
 
-Quick check in Python:
+Quick check in Python (quote the path, since folder names contain `!`, spaces and `&`):
 
 ```python
 import pandas as pd
 
-df = pd.read_parquet("data/ES_1m.parquet")   # or pd.read_csv(..., parse_dates=["timestamp"])
+df = pd.read_csv("ES1!/ES1_5m.csv", parse_dates=["timestamp"])  # or pd.read_parquet(...)
 print(df.head())
-print(df.index.is_monotonic_increasing, df["timestamp"].is_monotonic_increasing)
+print(df["timestamp"].is_monotonic_increasing)
 ```
 
 ## Sources
@@ -63,22 +124,22 @@ print(df.index.is_monotonic_increasing, df["timestamp"].is_monotonic_increasing)
 
 | Data | Source | Terms |
 |------|--------|-------|
-| ES, MGC | `<vendor / broker / API>` | `<link to terms>` |
+| All folders | `<vendor / broker / API>` | `<link to terms>` |
 
 ## Known limitations
 
 - Bar data only. No tick data, no order book.
 - Backtests on this data do not model slippage or liquidity. Set those in the backtester.
-- Contract rolls: `<describe how the continuous series was built>`.
+- Spot forex and metals have no central exchange, so prices differ slightly between vendors.
 - Not guaranteed free of gaps, bad prints or vendor errors. Run the backtester's integrity check before trusting a result.
 
 ## Adding or updating data
 
-1. Add the file under `data/` using the naming convention above.
-2. Add a row to the table at the top and to Sources.
-3. Commit with a message like `Add NQ 5m 2020-2026`.
+1. Add a folder (or files in an existing one) using the naming convention above.
+2. Add the instrument to the right table.
+3. Commit with a message like `Add USDMXN 5m 2020-2026`.
 
-**File size:** GitHub blocks files over 100 MB. Prefer Parquet (far smaller than CSV). If a file is still too big, use [Git LFS](https://git-lfs.com) (`git lfs track "data/*.parquet"`).
+**File size:** GitHub blocks files over 100 MB. Prefer Parquet (far smaller than CSV). If a file is still too big, use [Git LFS](https://git-lfs.com) (`git lfs track "**/*.parquet"`).
 
 ## Disclaimer
 
