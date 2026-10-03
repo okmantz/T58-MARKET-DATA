@@ -1,0 +1,23 @@
+Copyright (c) 2026 T58 Trading. All rights reserved.
+
+This repository contains market data compiled for use with the T58 Quant Algo
+Backtester.
+
+1. PERMITTED USE. The copyright holder and people expressly authorized by the
+   copyright holder may use this data for research, backtesting and strategy
+   development.
+
+2. NO REDISTRIBUTION. You may not copy, publish, sell, sublicense or otherwise
+   share this data, in whole or in part, with anyone else without prior
+   written permission.
+
+3. THIRD-PARTY DATA. Portions of this data originate from third-party data
+   providers and remain subject to those providers' terms. Nothing in this
+   license grants rights beyond what those terms allow.
+
+4. NO WARRANTY. THE DATA IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+   EXPRESS OR IMPLIED, INCLUDING ACCURACY, COMPLETENESS OR FITNESS FOR A
+   PARTICULAR PURPOSE. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY
+   CLAIM OR DAMAGES, INCLUDING TRADING LOSSES, ARISING FROM USE OF THE DATA.
+
+5. NOT FINANCIAL ADVICE. Nothing in this repository is investment advice.
